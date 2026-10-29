@@ -1,0 +1,7 @@
+{
+  "name": "snip-cli",
+  "version": "1.0.0",
+  "bin": {
+    "snip": "./cli.js"
+  }
+}
