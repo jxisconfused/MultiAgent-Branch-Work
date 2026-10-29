@@ -1,0 +1,93 @@
+<div class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Snip home">
+      <span class="brand-mark" aria-hidden="true">s</span>
+      <span>snip</span>
+    </a>
+    <div class="api-indicator" aria-label="API address localhost:3000">
+      <span class="api-dot" aria-hidden="true"></span>
+      <span>localhost:3000</span>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">LINK WORKSPACE</p>
+      <h1 id="page-title">Your links,<br /><span>neatly shortened.</span></h1>
+    </section>
+
+    <section class="composer" aria-label="Create a short link">
+      <form (ngSubmit)="createLink()">
+        <label for="destination">PASTE A DESTINATION</label>
+        <div class="input-row">
+          <input
+            id="destination"
+            name="url"
+            type="url"
+            autocomplete="url"
+            placeholder="https://example.com/a/very/long/link"
+            [ngModel]="url()"
+            (ngModelChange)="onUrlChange($event)"
+            [attr.aria-invalid]="url() && !isUrlValid() ? 'true' : null"
+            required
+          />
+          <button type="submit" [disabled]="!isUrlValid() || isSubmitting()">
+            {{ isSubmitting() ? 'Shortening...' : 'Shorten link' }}
+          </button>
+        </div>
+        @if (url() && !isUrlValid()) {
+          <p class="field-hint">Use a complete HTTP or HTTPS address.</p>
+        }
+      </form>
+
+      @if (errorMessage()) {
+        <div class="notice notice-error" role="alert">{{ errorMessage() }}</div>
+      }
+
+      @if (shortenedLink(); as link) {
+        <div class="notice notice-success" aria-live="polite">
+          <span class="success-label">SHORT LINK READY</span>
+          <a [href]="link.shortUrl" target="_blank" rel="noopener noreferrer">{{ link.shortUrl }}</a>
+        </div>
+      }
+    </section>
+
+    <section class="links-section" aria-labelledby="links-title">
+      <div class="section-heading">
+        <h2 id="links-title">All links</h2>
+        <span class="link-count">{{ links().length }}</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">SHORT CODE</th>
+              <th scope="col">DESTINATION</th>
+              <th scope="col" class="hits-column">HITS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isLoading()) {
+              <tr><td class="table-message" colspan="3">Loading links...</td></tr>
+            } @else if (links().length === 0) {
+              <tr><td class="table-message" colspan="3">No links yet.</td></tr>
+            } @else {
+              @for (link of links(); track link.code) {
+                <tr>
+                  <td><a class="code-link" [href]="link.shortUrl" target="_blank" rel="noopener noreferrer">{{ link.code }}</a></td>
+                  <td class="destination-cell" [title]="link.url">{{ link.url }}</td>
+                  <td class="hits-column">{{ link.hits }}</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>SNIP / LOCAL API</span>
+      <span>Links reset when the backend restarts.</span>
+    </footer>
+  </main>
+</div>
