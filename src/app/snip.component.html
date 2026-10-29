@@ -11,12 +11,13 @@
   </header>
 
   <main class="workspace">
-    <section class="intro" aria-labelledby="page-title">
+    <section class="intro hero" aria-labelledby="page-title">
       <p class="eyebrow">LINK WORKSPACE</p>
       <h1 id="page-title">Your links,<br /><span>neatly shortened.</span></h1>
+        <p class="hero-subline">A cleaner home for every destination.</p>
     </section>
 
-    <section class="composer" aria-label="Create a short link">
+    <section class="composer chat-composer" aria-label="Create a short link">
       <form (ngSubmit)="createLink()">
         <label for="destination">PASTE A DESTINATION</label>
         <div class="input-row">
@@ -52,7 +53,7 @@
       }
     </section>
 
-    <section class="links-section" aria-labelledby="links-title">
+    <section class="links-section table-card" aria-labelledby="links-title">
       <div class="section-heading">
         <h2 id="links-title">All links</h2>
         <span class="link-count">{{ links().length }}</span>
