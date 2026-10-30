@@ -12,6 +12,7 @@ import { Link, LinksService } from './links.service';
 export class AppComponent {
   private readonly linksService = inject(LinksService);
 
+  readonly apiAddress = this.linksService.apiOrigin || 'same origin';
   readonly url = signal('');
   readonly links = signal<Link[]>([]);
   readonly shortenedLink = signal<Link | null>(null);

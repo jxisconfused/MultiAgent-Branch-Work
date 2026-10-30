@@ -13,7 +13,8 @@ export interface Link {
 @Injectable({ providedIn: 'root' })
 export class LinksService {
   private readonly http = inject(HttpClient);
-  private readonly endpoint = isDevMode() ? 'http://localhost:3000/api/links' : '/api/links';
+  readonly apiOrigin = isDevMode() ? 'http://localhost:3000' : '';
+  private readonly endpoint = `${this.apiOrigin}/api/links`;
 
   getAll(): Observable<Link[]> {
     return this.http.get<Link[]>(this.endpoint);

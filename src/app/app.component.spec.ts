@@ -26,5 +26,6 @@ describe('AppComponent', () => {
     request.flush([]);
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Your links');
+    expect(compiled.querySelector('.api-indicator')?.textContent).toContain('http://localhost:3000');
   });
 });

@@ -4,9 +4,9 @@
       <span class="brand-mark" aria-hidden="true">s</span>
       <span>snip</span>
     </a>
-    <div class="api-indicator" aria-label="API address localhost:3000">
+    <div class="api-indicator" [attr.aria-label]="'API address ' + apiAddress">
       <span class="api-dot" aria-hidden="true"></span>
-      <span>localhost:3000</span>
+      <span>{{ apiAddress }}</span>
     </div>
   </header>
 
@@ -87,7 +87,7 @@
     </section>
 
     <footer class="page-footer">
-      <span>SNIP / LOCAL API</span>
+      <span>SNIP / API</span>
       <span>Links reset when the backend restarts.</span>
     </footer>
   </main>
