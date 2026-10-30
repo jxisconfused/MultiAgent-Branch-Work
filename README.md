@@ -11,6 +11,8 @@ snip-demo/
 ├── backend/    Bun API and short-code redirects  (branch: backend)
 ├── frontend/   Angular 19 web client             (branch: frontend)
 ├── cli/        Node.js command-line client       (branch: cli)
+├── bundle/     Generated deployable release      (branch: bundle)
+├── scripts/    Release bundle generator
 ├── .gitmodules
 └── README.md
 ```
@@ -79,3 +81,47 @@ git push
 ```
 
 Repeat with `frontend` or `cli` as needed. The project commit and the superproject's pointer update are separate commits.
+
+## Generated Release Bundle
+
+The orphan `bundle` branch is generated output: do not hand-edit it. From a clean
+`main` checkout with Node.js, npm, Git, and a Git commit identity configured, run:
+
+```sh
+node scripts/build-bundle.mjs
+node scripts/build-bundle.mjs --push
+```
+
+The script updates `backend`, `frontend`, and `cli` to their configured remote
+branch tips, runs `npm install` and a production Angular build, and requires
+`frontend/dist/snip-frontend/browser/index.html`. It copies the backend and CLI
+unchanged, replaces `bundle/public` with the frontend output, and generates the
+runtime and deployment files. It commits generated changes inside `bundle` first,
+then commits only the four submodule pointers on `main`. Identical output reports
+`nothing to commit` rather than attempting an empty commit. Dirty worktrees or
+pre-existing staged changes stop the script; no unrelated files are committed.
+
+Without `--push`, commits remain local. With `--push`, it pushes `HEAD:bundle`
+before `HEAD:main`, including any local release commits from an earlier run.
+Push source-branch commits before generating, since generation follows remote
+tips. In CI, configure the Git author identity and authentication before using
+`--push`.
+
+To run the assembled release:
+
+```sh
+cd bundle
+bun start
+node cli.js ls
+```
+
+Open `http://localhost:3000` for both the UI and API. Bun loads the generated
+`.env` containing `PUBLIC_DIR=./public`; it contains no secrets. The package has
+no `"type"` field, preserving the CLI's plain-Node CommonJS behavior.
+Production UI builds call the same-origin API; development builds still call
+`http://localhost:3000`. As with the development backend, links are in memory.
+
+For Railway, deploy the `bundle` branch at its root. Its `railway.json` selects
+the Dockerfile builder, and the Bun Alpine image serves both UI and API.
+`.dockerignore` excludes Git metadata, dependencies, and local environment
+overrides while retaining the generated `.env`.
