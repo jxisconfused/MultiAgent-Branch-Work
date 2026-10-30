@@ -125,3 +125,23 @@ For Railway, deploy the `bundle` branch at its root. Its `railway.json` selects
 the Dockerfile builder, and the Bun Alpine image serves both UI and API.
 `.dockerignore` excludes Git metadata, dependencies, and local environment
 overrides while retaining the generated `.env`.
+
+## GitHub Actions
+
+**Build bundle** runs hourly at minute 17 (UTC) or through `workflow_dispatch`.
+It checks out `main`, uses Node 24, and runs the generator with `--push` as
+`github-actions[bot]`. It has no push trigger: source branches do not contain
+this workflow, and GitHub reads push workflows from the pushed branch.
+Concurrent bundle runs are serialized to avoid competing release pushes.
+
+**Build and push image** runs when a push to `main` changes the `bundle`
+submodule pointer or its Docker workflow, or through `workflow_dispatch`.
+It builds the pinned bundle with its Dockerfile and publishes
+`ghcr.io/jxisconfused/multiagent-branch-work:latest` and
+`ghcr.io/jxisconfused/multiagent-branch-work:sha-<short-main-commit>` using
+`GITHUB_TOKEN` with package-write permission.
+
+GitHub suppresses push-triggered workflows for commits pushed by `GITHUB_TOKEN`.
+Therefore, after pinning a changed bundle, **Build bundle** explicitly dispatches
+the Docker workflow on `main` using its additional `actions: write` permission.
+No-op bundle runs do not dispatch an image build.
