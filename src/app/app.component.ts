@@ -77,7 +77,7 @@ export class AppComponent {
     if (error instanceof HttpErrorResponse) {
       const message = error.error?.error;
       if (typeof message === 'string') return message;
-      if (error.status === 0) return 'Cannot reach the Snip API at localhost:3000.';
+      if (error.status === 0) return 'Cannot reach the Snip API.';
       return `The request failed (${error.status}). Please try again.`;
     }
 

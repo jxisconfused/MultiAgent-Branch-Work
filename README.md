@@ -12,6 +12,10 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
+Development builds use the API at `http://localhost:3000/api/links`.
+Production builds use `/api/links` on the same origin, so the generated bundle
+can serve both the UI and API from one Bun server.
+
 ## Code scaffolding
 
 Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
